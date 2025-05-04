@@ -20,8 +20,8 @@ export default function Navbar() {
     const pathname = location.pathname
 
     const routes: Route[] = [
+        { name: "Expositores", path: "/exhibitors", icon: <Users className="h-4 w-4 mr-2" /> },
         { name: "Eventos", path: "/events", icon: <Calendar className="h-4 w-4 mr-2" /> },
-        { name: "Personas", path: "/persons", icon: <Users className="h-4 w-4 mr-2" /> },
         { name: "Música", path: "/musica", icon: <Music className="h-4 w-4 mr-2" /> },
         { name: "Otros", path: "/otros", icon: <Shield className="h-4 w-4 mr-2" /> },
     ]

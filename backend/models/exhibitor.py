@@ -1,13 +1,18 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr, constr
 from datetime import datetime
 from typing import Optional
 
 class Exhibitor(BaseModel):
     id: Optional[str] = Field(alias="_id", default=None)
-    id_event: str
-    id_person: str
-    category: str
+    name: str
+    last_name: str
+    email: EmailStr
     bio: str
+    category_exhibitor: str
+    phone: constr(min_length=9, max_length=9)
+    address: str
+    city: str
+    country: str
     created_at: datetime
     updated_at: datetime
     
