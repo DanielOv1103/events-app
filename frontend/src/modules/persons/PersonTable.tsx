@@ -4,19 +4,7 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-
-export interface Person {
-    id: string;
-    name: string;
-    last_name: string;
-    email: string;
-    phone: string;
-    address: string;
-    city: string;
-    country: string;
-    created_at: string;
-    updated_at: string;
-}
+import { Person } from "@/type/person"
 
 interface PersonTableProps {
     data?: Person[];

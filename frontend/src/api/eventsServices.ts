@@ -1,4 +1,4 @@
-import { Event } from '../type/Events';
+import { Event } from '@/type/events';
 
 const API_BASE_URL = 'http://127.0.0.1:8000'; // Ajusta según tu backend
 

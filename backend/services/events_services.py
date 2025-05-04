@@ -1,6 +1,7 @@
 from bson import ObjectId
 from typing import List, Optional
 from models.event import Event
+from fastapi import HTTPException
 import db
 
 def list_events() -> List[Event]:
@@ -14,7 +15,7 @@ def list_events() -> List[Event]:
 def get_event(event_id: str) -> Optional[Event]:
     doc = db.db["events"].find_one({"_id": ObjectId(event_id)})
     if doc:
-        doc["id"] = str(doc["_id"])                                              
+        doc["_id"] = str(doc["_id"])                                              
         return Event(**doc)                             
     return None
 

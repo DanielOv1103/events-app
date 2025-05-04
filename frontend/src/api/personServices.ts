@@ -1,50 +1,73 @@
+import { Person } from '@/type/person';
+
 const baseUrl = 'http://localhost:8000/';
 
-export const getPersons = () => {
-    return fetch(`${baseUrl}persons`)
-        .then(res => res.json())
-        .then(data => data.persons)
-        .catch(err => console.error('Error fetching persons:', err));
+    export const getPersons = async (): Promise<Person[]> => {
+        try {
+            const res = await fetch(`${baseUrl}persons`);
+            const data = await res.json();
+            console.log(data)
+            return Array.isArray(data) ? data : [];
+        } catch (err) {
+            console.error('Error fetching persons:', err);
+            return [];
+        }
+    };
+
+export const getPerson = async (id: string): Promise<Person | null> => {
+    try {
+        const res = await fetch(`${baseUrl}persons/${id}`);
+        const data = await res.json();
+        return data.person as Person;
+    } catch (err) {
+        console.error('Error fetching person:', err);
+        return null;
+    }
 };
 
-export const getPerson = (id: string) => {
-    return fetch(`${baseUrl}persons/${id}`)
-        .then(res => res.json())
-        .then(data => data.person)
-        .catch(err => console.error('Error fetching person:', err));
+export const createPerson = async (person: Omit<Person, 'id' | 'created_at' | 'updated_at'>): Promise<Person | null> => {
+    try {
+        const res = await fetch(`${baseUrl}persons`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(person),
+        });
+        const data = await res.json();
+        return data.person as Person;
+    } catch (err) {
+        console.error('Error creating person:', err);
+        return null;
+    }
 };
 
-export const createPerson = (person: any) => {
-    return fetch(`${baseUrl}persons`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(person),
-    })
-        .then(res => res.json())
-        .then(data => data.person)
-        .catch(err => console.error('Error creating person:', err));
+export const updatePerson = async (id: string, person: Partial<Omit<Person, 'id' | 'created_at' | 'updated_at'>>): Promise<Person | null> => {
+    try {
+        const res = await fetch(`${baseUrl}persons/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(person),
+        });
+        const data = await res.json();
+        return data.person as Person;
+    } catch (err) {
+        console.error('Error updating person:', err);
+        return null;
+    }
 };
 
-export const updatePerson = (id: string, person: any) => {
-    return fetch(`${baseUrl}persons/${id}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(person),
-    })
-        .then(res => res.json())
-        .then(data => data.person)
-        .catch(err => console.error('Error updating person:', err));
-};
-
-export const deletePerson = (id: string) => {
-    return fetch(`${baseUrl}persons/${id}`, {
-        method: 'DELETE',
-    })
-        .then(res => res.json())
-        .then(data => data.person)
-        .catch(err => console.error('Error deleting person:', err));
+export const deletePerson = async (id: string): Promise<boolean> => {
+    try {
+        const res = await fetch(`${baseUrl}persons/${id}`, {
+            method: 'DELETE',
+        });
+        const data = await res.json();
+        return data.success ?? true; // Asegúrate de que tu backend devuelve { success: true }
+    } catch (err) {
+        console.error('Error deleting person:', err);
+        return false;
+    }
 };

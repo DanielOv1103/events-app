@@ -21,7 +21,8 @@ export default function PersonsComponent() {
         setLoading(true)
         try {
             const response = await getPersons()
-            setPersons(response.data || response)
+            setPersons(response)
+            console.log(response)
             setError(null)
         } catch (err) {
             console.error('Error fetching persons:', err)
@@ -95,6 +96,7 @@ export default function PersonsComponent() {
             if (isCreating) {
                 await createPerson(personData)
                 setSuccess('Persona creada correctamente')
+                await fetchPersons()
             } else {
                 await updatePerson(personData.id || '', personData)
                 setSuccess('Persona actualizada correctamente')
