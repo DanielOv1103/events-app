@@ -4,9 +4,9 @@ from typing import Optional, List
 
 class EventDistribution(BaseModel):
     name: str
-    description: str
     capacity: int
     ocuped: int
+    price: float
 
 class Event(BaseModel):
     id: Optional[str] = Field(alias="_id", default=None)
@@ -15,7 +15,6 @@ class Event(BaseModel):
     description: str
     date: datetime
     address: str
-    price: float
     image: str
     category: str
     total_capacity: int

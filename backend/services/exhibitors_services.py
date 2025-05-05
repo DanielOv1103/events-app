@@ -7,15 +7,13 @@ def list_exhibitors() -> List[Exhibitor]:
     exhibitors: List[Exhibitor] = []
     for doc in db.db["exhibitors"].find():
         doc["_id"] = str(doc["_id"])
-        del doc["_id"]
         exhibitors.append(Exhibitor(**doc))
     return exhibitors
 
 def get_exhibitor(exhibitor_id: str) -> Optional[Exhibitor]:
     doc = db.db["exhibitors"].find_one({"_id": ObjectId(exhibitor_id)})
     if doc:
-        doc["id"] = str(doc["_id"])                  
-        del doc["_id"]                               
+        doc["id"] = str(doc["_id"])                                                
         return Exhibitor(**doc)                             
     return None
 

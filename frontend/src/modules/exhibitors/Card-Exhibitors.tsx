@@ -2,28 +2,38 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Exhibitor } from "@/type/exhibitor";
 
-
-
 interface CardExhibitorProps {
-    exhibitor: Exhibitor; // Recibe el exhibidor como prop
-    selectedExhibitor?: Exhibitor | null; // Recibe el exhibidor seleccionado como prop
-    setSelectedExhibitor: (exhibitor: Exhibitor) => void;
+    exhibitor: Exhibitor;
+    selectedExhibitors: Exhibitor[];
+    setSelectedExhibitors: (exhibitors: Exhibitor[]) => void;
 }
 
 export default function CardExhibitors({
     exhibitor,
-    selectedExhibitor,
-    setSelectedExhibitor,
+    selectedExhibitors,
+    setSelectedExhibitors,
 }: CardExhibitorProps) {
+    const isSelected = selectedExhibitors.some(e => e._id === exhibitor._id);
+
+    const handleClick = () => {
+        if (isSelected) {
+            // Si ya está seleccionado, lo quitamos
+            setSelectedExhibitors(selectedExhibitors.filter(e => e._id !== exhibitor._id));
+        } else {
+            // Si no está seleccionado, lo agregamos
+            setSelectedExhibitors([...selectedExhibitors, exhibitor]);
+        }
+    };
+
     return (
         <div>
             <Card
-                key={exhibitor.id}
-                className={`transition-all duration-300 hover:shadow-lg ${selectedExhibitor?.id === exhibitor.id
-                        ? "ring-2 ring-purple-500 dark:ring-purple-400 shadow-md transform scale-[1.02]"
-                        : "hover:shadow-md"
+                key={exhibitor._id}
+                className={`transition-all duration-300 hover:shadow-lg ${isSelected
+                    ? "ring-2 ring-purple-500 dark:ring-purple-400 shadow-md scale-[1.02]"
+                    : "hover:shadow-md"
                     }`}
-                onClick={() => setSelectedExhibitor(exhibitor)}
+                onClick={handleClick}
             >
                 <CardHeader className="pb-2">
                     <div className="flex justify-between items-center">

@@ -23,7 +23,7 @@ export default function ExhibitorForm({
     isCreating = false
 }: ExhibitorFormProps) {
     const [formData, setFormData] = useState<Exhibitor>({
-        id: exhibitor?.id || "",
+        _id: exhibitor?._id || "",
         name: exhibitor?.name || "",
         last_name: exhibitor?.last_name || "",
         email: exhibitor?.email || "",
@@ -33,6 +33,7 @@ export default function ExhibitorForm({
         address: exhibitor?.address || "",
         city: exhibitor?.city || "",
         country: exhibitor?.country || "",
+        image: exhibitor?.image || "",
         created_at: exhibitor?.created_at || new Date().toISOString(),
         updated_at: new Date().toISOString()
     })
@@ -139,6 +140,11 @@ export default function ExhibitorForm({
                     <div className="space-y-2">
                         <Label htmlFor="bio">Biografía</Label>
                         <Textarea id="bio" name="bio" value={formData.bio} onChange={handleChange} required />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="image">Imagen</Label>
+                        <Input id="image" name="image" value={formData.image} onChange={handleChange} required />
                     </div>
 
                     <div className="space-y-2">

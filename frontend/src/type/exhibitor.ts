@@ -1,5 +1,5 @@
 export interface Exhibitor {
-    id: string;
+    _id: string;
     name: string;
     last_name: string;
     email: string;

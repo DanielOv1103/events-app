@@ -53,7 +53,7 @@ export default function ExhibitorComponent() {
 
     const handleDelete = async (exhibitor: Exhibitor) => {
         try {
-            await deleteExhibitor(exhibitor.id)
+            await deleteExhibitor(exhibitor._id)
             setSuccess("Expositor eliminado correctamente")
             await fetchExhibitors()
         } catch (err) {
@@ -84,7 +84,7 @@ export default function ExhibitorComponent() {
         setSelectedExhibitors(prev =>
             prev.length === exhibitors.length
                 ? []
-                : exhibitors.map(exhibitor => exhibitor.id)
+                : exhibitors.map(exhibitor => exhibitor._id)
         )
     }
 
@@ -94,7 +94,7 @@ export default function ExhibitorComponent() {
                 await createExhibitor(exhibitorData)
                 setSuccess("Expositor creado correctamente")
             } else {
-                await updateExhibitor(exhibitorData.id, exhibitorData)
+                await updateExhibitor(exhibitorData._id, exhibitorData)
                 setSuccess("Expositor actualizado correctamente")
             }
             setIsFormOpen(false)

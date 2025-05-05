@@ -6,7 +6,6 @@ const baseUrl = 'http://localhost:8000/';
         try {
             const res = await fetch(`${baseUrl}exhibitors`);
             const data = await res.json();
-            console.log(data)
             return Array.isArray(data) ? data : [];
         } catch (err) {
             console.error('Error fetching persons:', err);

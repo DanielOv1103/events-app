@@ -5,7 +5,6 @@ import CardExhibitors from "../exhibitors/Card-Exhibitors";
 import { useDataHook } from "./hooks/useDataHook";
 import Form from "./Form";
 import { useSaveData } from "./hooks/useSaveData";
-import { Separator } from "@/components/ui/separator";
 
 const initialFormData: Event = {
     _id: "",
@@ -13,7 +12,6 @@ const initialFormData: Event = {
     description: "",
     date: "",
     address: "",
-    price: 0,
     category: "",
     image: "",
     created_at: "",
@@ -27,16 +25,48 @@ const initialFormData: Event = {
 
 export default function CreateEvent() {
     const { exhibitors, loading, error } = useDataHook();
-    const [selectedExhibitor, setSelectedExhibitor] = useState<Exhibitor | null>(null);
+    const [selectedExhibitors, setSelectedExhibitors] = useState<Exhibitor[]>([]);
     const [formData, setFormData] = useState<Event>(initialFormData);
     const { saveData, isSaving } = useSaveData();
 
+    const handleDistributionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        const [distName, field] = name.split("-");
+        setFormData(prev => {
+            const existingDist = prev.distribution.find(d => d.name === distName);
+            const updatedDist = existingDist
+                ? {
+                    ...existingDist,
+                    [field]: field === "price" || field === "capacity" ? Number(value) : value,
+                }
+                : {
+                    name: distName,
+                    price: 0,
+                    capacity: 0,
+                    ocuped: 0,
+                    [field]: Number(value),
+                };
+    
+            const newDistributions = prev.distribution.filter(d => d.name !== distName);
+            return {
+                ...prev,
+                distribution: [...newDistributions, updatedDist],
+            };
+        });
+    };
+
     // Update exhibitorId in formData when a new exhibitor is selected
     useEffect(() => {
-        if (selectedExhibitor) {
-            setFormData(prev => ({ ...prev, id_exhibitor: [selectedExhibitor.id] }));
+        if (selectedExhibitors.length > 0) {
+            setFormData(prev => ({
+                ...prev,
+                id_exhibitor: selectedExhibitors.map(ex => ex._id),
+            }));
+        } else {
+            setFormData(prev => ({ ...prev, id_exhibitor: [] }));
         }
-    }, [selectedExhibitor]);
+    }, [selectedExhibitors]);
+    
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -62,7 +92,7 @@ export default function CreateEvent() {
         if (result) {
             alert("Evento guardado correctamente");
             setFormData(initialFormData);
-            setSelectedExhibitor(null);
+            setSelectedExhibitors([]);
         }
     };
 
@@ -70,19 +100,18 @@ export default function CreateEvent() {
     if (error) return <p>Error al cargar expositores: {error}</p>;
 
     return (
-        <main className="flex items-center gap-4 p-4">
-            <div className="w-1/2  p-4">
+        <main className="flex gap-4 p-4 container mx-auto px-4">
+            <div className="w-full p-4">
                 <h2 className="text-lg font-bold mb-2">Selecciona un Expositor</h2>
                 {exhibitors.map(exhibitor => (
                     <CardExhibitors
-                        key={exhibitor.id}
+                        key={exhibitor._id}
                         exhibitor={exhibitor}
-                        selectedExhibitor={selectedExhibitor}
-                        setSelectedExhibitor={setSelectedExhibitor}
+                        selectedExhibitors={selectedExhibitors}
+                        setSelectedExhibitors={setSelectedExhibitors}
                     />
                 ))}
             </div>
-            <Separator orientation="vertical" className="w-full mr-4" />
             <div className="flex justify-center w-full p-4">
                 <Form
                     formData={formData}
@@ -91,6 +120,7 @@ export default function CreateEvent() {
                     onCheckboxChange={handleCheckboxChange}
                     onCategoryChange={handleCategoryChange}
                     onSubmit={handleSubmit}
+                    onDistributionChange={handleDistributionChange}
                 />
             </div>
         </main>

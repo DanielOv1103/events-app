@@ -82,12 +82,12 @@ const ExhibitorTable = ({
                         </TableRow>
                     ) : (
                         data.map((exhibitor) => (
-                            <TableRow key={exhibitor.id} className="group">
+                            <TableRow key={exhibitor._id} className="group">
                                 {showCheckbox && (
                                     <TableCell>
                                         <Checkbox
-                                            checked={selectedItems.includes(exhibitor.id)}
-                                            onCheckedChange={() => onSelect?.(exhibitor.id)}
+                                            checked={selectedItems.includes(exhibitor._id)}
+                                            onCheckedChange={() => onSelect?.(exhibitor._id)}
                                             aria-label={`Seleccionar ${exhibitor.name}`}
                                         />
                                     </TableCell>

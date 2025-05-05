@@ -99,12 +99,6 @@ const CardEvents = ({ event}: CardEventsProps) => {
                     </div>
                 )}
                 
-                {event.price && (
-                    <div className="flex items-center space-x-1 text-sm text-gray-700">
-                        <DollarSign className="h-4 w-4 text-violet-500" />
-                        <span>{event.price.toFixed(2)}</span>
-                    </div>
-                )}
             </CardFooter>
 
             {/* Botones de edición y eliminación */}
