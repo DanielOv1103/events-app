@@ -1,12 +1,16 @@
-import {
-    Card,
-    CardContent,
-    CardFooter,
-} from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Calendar, MapPin, Edit2, Trash2, Clock, DollarSign } from "lucide-react"
-import { Event } from '@/type/events'
+import {
+    Calendar,
+    MapPin,
+    Edit2,
+    Trash2,
+    Clock
+} from "lucide-react"
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
+import { Event } from "@/type/events"
+import ImageComponent from "@/components/imageComponent"
+import { useDataHook } from "@/modules/events/hooks/useDataHook"
 
 interface CardEventsProps {
     event: Event | null | undefined
@@ -14,115 +18,113 @@ interface CardEventsProps {
     onDelete: (event: Event) => void
 }
 
-const CardEvents = ({ event, onDelete, onEdit}: CardEventsProps) => {
+const CardEvents = ({ event, onDelete, onEdit }: CardEventsProps) => {
     if (!event) {
-        return <div className="bg-white rounded-lg shadow p-4">Evento no disponible</div>;
+        return (
+            <Card className="w-full max-w-4xl mx-auto">
+                <CardContent className="p-6 text-center text-muted-foreground">
+                    Evento no disponible
+                </CardContent>
+            </Card>
+        )
     }
 
-    // Formatear fecha y hora
     const formatDateTime = (dateString: string) => {
-        const date = new Date(dateString);
+        const date = new Date(dateString)
         return {
-            date: date.toLocaleDateString('es-ES', {
-                weekday: 'short',
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric'
+            date: date.toLocaleDateString("es-ES", {
+                weekday: "short",
+                day: "numeric",
+                month: "short",
+                year: "numeric",
             }),
-            time: date.toLocaleTimeString('es-ES', {
-                hour: '2-digit',
-                minute: '2-digit'
-            })
-        };
-    };
+            time: date.toLocaleTimeString("es-ES", {
+                hour: "2-digit",
+                minute: "2-digit",
+            }),
+        }
+    }
 
-    const formattedDate = event.date ? formatDateTime(event.date) : null;
+    const formattedDate = event.date ? formatDateTime(event.date) : null
+
+    const { exhibitors } = useDataHook()
+
+    const exhibitor = exhibitors.find(exhibitor => exhibitor._id === event.id_exhibitor[0])
+    const exhibitorName = exhibitor ? exhibitor.name + " " + exhibitor.last_name : "Exhibidor no encontrado";
 
     return (
-        <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg group border-none">
-            <div className="h-48 bg-cover bg-center relative" style={{ backgroundImage: `url(${event.image})` }}>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                <div className="absolute bottom-0 left-0 p-4 w-full">
-                    <Badge className="mb-2 text-white bg-violet-600 hover:bg-violet-700 rounded-2xl">
-                        {event.category}
-                    </Badge>
-                    <h3 className="text-xl font-bold text-white">{event.name}</h3>
-                </div>
+        <main className="flex flex-col md:flex-row transition-shadow duration-300 hover:shadow-lg group border-2 rounded-sm max-w-4xl w-full mx-auto">
+            <div className="md:w-1/3 w-full h-full">
+                <ImageComponent
+                    image={event.image}
+                    category={event.category}
+                    name={event.name}
+                />
             </div>
-            
-            <CardContent className="pt-4">
-                <div className="space-y-3">
-                    {/* Fecha */}
-                    <div className="flex items-center text-sm text-gray-500">
-                        <Calendar className="h-4 w-4 mr-2 text-violet-500" />
-                        <span>
-                            {formattedDate ? formattedDate.date : 'Fecha no definida'}
-                        </span>
+            <div className="md:w-2/3 w-full flex flex-col justify-between">
+                <CardHeader className="pb-2 pt-4 px-6 space-y-2">
+                    <h1 className="font-semibold">Datos del evento</h1>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                        <Calendar className="w-4 h-4 mr-2 text-violet-500" />
+                        <span>{formattedDate?.date || "Fecha no definida"}</span>
                     </div>
-                    
-                    {/* Hora */}
-                    <div className="flex items-center text-sm text-gray-500">
-                        <Clock className="h-4 w-4 mr-2 text-violet-500" />
-                        <span>
-                            {formattedDate ? formattedDate.time : '--:--'} horas
-                        </span>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                        <Clock className="w-4 h-4 mr-2 text-violet-500" />
+                        <span>{formattedDate?.time || "--:--"} horas</span>
                     </div>
-                    
-                    {/* Ubicación */}
-                    <div className="flex items-center text-sm text-gray-500">
-                        <MapPin className="h-4 w-4 mr-2 text-violet-500" />
-                        <span>
-                            {/* {event.location || 'Ubicación no especificada'} */}
-                            {event.address && ` (${event.address})`}
-                        </span>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                        <MapPin className="w-4 h-4 mr-2 text-violet-500" />
+                        <span>{event.address || "Ubicación no especificada"}</span>
                     </div>
-                    
-                    {/* Descripción */}
-                    <p className="text-sm text-gray-600 line-clamp-2 mt-2">
+                    <div className="flex items-center text-sm text-muted-foreground">
+                        <MapPin className="w-4 h-4 mr-2 text-violet-500" />
+                        <span>{exhibitorName || "Ubicación no especificada"}</span>
+                    </div>
+                </CardHeader>
+
+                <CardContent className="px-6 pb-2 pt-0">
+                    <h2 className="text-sm font-semibold">Descipcion</h2>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
                         {event.description}
                     </p>
-                </div>
-            </CardContent>
+                    {event.tags && event.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-3">
+                            {event.tags.map((tag, index) => (
+                                <Badge
+                                    key={index}
+                                    className="text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl"
+                                >
+                                    {tag}
+                                </Badge>
+                            ))}
+                        </div>
+                    )}
+                </CardContent>
 
-            {/* Tags y precio */}
-            <CardFooter className="flex justify-between pt-0 pb-4">
-                {event.tags && event.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                        {event.tags.map((tag, index) => (
-                            <Badge 
-                                key={index} 
-                                className="text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl"
-                            >
-                                {tag}
-                            </Badge>
-                        ))}
-                    </div>
-                )}
-                
-            </CardFooter>
+                <CardFooter className="justify-end gap-2 px-6 pb-4">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-violet-500 hover:bg-violet-700 hover:text-white"
+                        onClick={onEdit}
+                    >
+                        <Edit2 className="h-4 w-4 mr-2" />
+                        Editar
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-red-500 hover:bg-red-700 hover:text-white"
+                        onClick={() => onDelete(event)}
+                    >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Eliminar
+                    </Button>
+                </CardFooter>
+            </div>
 
-            {/* Botones de edición y eliminación */}
-            <CardFooter className="flex justify-between pt-0">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-violet-500 hover:bg-violet-700 hover:text-white"
-                    onClick={onEdit}
-                >
-                    <Edit2 className="h-4 w-4 mr-2" />
-                    Editar
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-red-500 hover:bg-red-700 hover:text-white"
-                    onClick={() => onDelete(event)}>
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Eliminar
-                </Button>
-            </CardFooter>
-        </Card>
+        </main>
     )
 }
 
-export default CardEvents;
+export default CardEvents

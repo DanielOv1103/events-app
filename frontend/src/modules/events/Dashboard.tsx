@@ -42,7 +42,7 @@ const EventDashboard = () => {
             {loading ? (
                 <p className="text-center">Cargando eventos...</p>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="flex flex-wrap w-[550px] h-[350px]  gap-6">
                     {events.map(evt => (
                         <CardEvents
                             key={evt._id}
