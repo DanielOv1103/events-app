@@ -10,11 +10,11 @@ import { Event } from '@/type/events'
 
 interface CardEventsProps {
     event: Event | null | undefined
-    // onEdit: () => void
-    // onDelete: () => void
+    onEdit: () => void
+    onDelete: (event: Event) => void
 }
 
-const CardEvents = ({ event}: CardEventsProps) => {
+const CardEvents = ({ event, onDelete, onEdit}: CardEventsProps) => {
     if (!event) {
         return <div className="bg-white rounded-lg shadow p-4">Evento no disponible</div>;
     }
@@ -107,7 +107,7 @@ const CardEvents = ({ event}: CardEventsProps) => {
                     variant="outline"
                     size="sm"
                     className="text-violet-500 hover:bg-violet-700 hover:text-white"
-                    // onClick={onEdit}
+                    onClick={onEdit}
                 >
                     <Edit2 className="h-4 w-4 mr-2" />
                     Editar
@@ -116,8 +116,7 @@ const CardEvents = ({ event}: CardEventsProps) => {
                     variant="outline"
                     size="sm"
                     className="text-red-500 hover:bg-red-700 hover:text-white"
-                    // onClick={onDelete}
-                >
+                    onClick={() => onDelete(event)}>
                     <Trash2 className="h-4 w-4 mr-2" />
                     Eliminar
                 </Button>

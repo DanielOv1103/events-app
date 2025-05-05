@@ -5,6 +5,9 @@ import CardExhibitors from "../exhibitors/Card-Exhibitors";
 import { useDataHook } from "./hooks/useDataHook";
 import Form from "./Form";
 import { useSaveData } from "./hooks/useSaveData";
+import { useNavigate, useParams } from "react-router-dom";
+import { getEvent } from "@/api/eventsServices";
+
 
 const initialFormData: Event = {
     _id: "",
@@ -28,6 +31,10 @@ export default function CreateEvent() {
     const [selectedExhibitors, setSelectedExhibitors] = useState<Exhibitor[]>([]);
     const [formData, setFormData] = useState<Event>(initialFormData);
     const { saveData, isSaving } = useSaveData();
+
+    const { id } = useParams()
+    const isEditMode = Boolean(id);
+    const navigate = useNavigate();
 
     const handleDistributionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -68,6 +75,22 @@ export default function CreateEvent() {
         }
     }, [selectedExhibitors]);
 
+    useEffect(() => {
+        const fetchEvent = async () => {
+            if (isEditMode && id) {
+                try {
+                    const existingEvent = await getEvent(id);
+                    setFormData(existingEvent);
+                    // También puedes setear expositores seleccionados si es necesario
+                } catch (error) {
+                    console.error("Error cargando el evento:", error);
+                }
+            }
+        };
+
+        fetchEvent();
+    }, [id]);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -102,6 +125,7 @@ export default function CreateEvent() {
         const result = await saveData(formData);
         if (result) {
             alert("Evento guardado correctamente");
+            navigate(`/events`)
             setFormData(initialFormData);
             setSelectedExhibitors([]);
         }

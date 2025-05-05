@@ -5,10 +5,18 @@ import { PlusCircle } from "lucide-react"
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useDataHook } from './hooks/useDataHook'
+import { useDeleteHook } from "./hooks/useDeleteHook"
+import { useNavigate } from 'react-router-dom'
 
 const EventDashboard = () => {
 
     const { events, loading, error, refetch } = useDataHook()
+    const { handleDeleteEvent } = useDeleteHook(refetch)
+    const navigate = useNavigate()
+
+    const handleEditEvent = (id: string) => {
+        navigate(`/events/edit/${id}`)
+    }
 
     useEffect(() => {
         refetch()
@@ -39,6 +47,8 @@ const EventDashboard = () => {
                         <CardEvents
                             key={evt._id}
                             event={evt}
+                            onDelete={handleDeleteEvent}
+                            onEdit={() => handleEditEvent(evt._id)}
                         />
                     ))}
                 </div>

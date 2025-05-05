@@ -17,6 +17,7 @@ function App() {
             <Route path="/events" element={<Events />} />
             <Route path='/exhibitors' element={<Exhibitors />} />
             <Route path='/events/create' element={<Create />} />
+            <Route path="/events/edit/:id" element={<Create />} />
           </Route>
         </Routes>
       </BrowserRouter>

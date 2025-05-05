@@ -6,39 +6,49 @@ export const useSaveData = () => {
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    const saveData = async (data: Event) => {
+    const saveData = async (data: Event): Promise<Event | null> => {
         setIsSaving(true);
         setError(null);
 
         try {
-            let response;
+            if (!data.name || !data.date) {
+                setError("El nombre y la fecha del evento son obligatorios");
+                return null;
+            }
+
+            let response: Event;
             const timestamp = new Date().toISOString();
 
             if (data._id) {
-                // Editar evento: solo actualizar updated_at
                 const updatedData = {
                     ...data,
                     updated_at: timestamp,
                 };
-                console.log("Datos del evento enviados:", updatedData);
+                console.log("Datos del evento enviados (actualizar):", updatedData);
                 response = await updateEvent(data._id, updatedData);
+
+                
                 console.log("Evento actualizado:", response);
             } else {
-                // Crear nuevo evento: agregar created_at y updated_at
                 const newData = {
                     ...data,
                     created_at: timestamp,
                     updated_at: timestamp,
                 };
-                console.log("Datos del evento enviados:", newData);
+                console.log("Datos del evento enviados (crear):", newData);
                 response = await createEvent(newData);
                 console.log("Evento creado:", response);
             }
 
             return response;
-        } catch (err) {
-            console.error("Error al guardar evento:", err);
-            setError("Error al guardar evento");
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                console.error("Error al guardar evento:", err.message);
+                setError(err.message);
+            } else {
+                console.error("Error desconocido al guardar evento:", err);
+                setError("Error desconocido");
+            }
             return null;
         } finally {
             setIsSaving(false);

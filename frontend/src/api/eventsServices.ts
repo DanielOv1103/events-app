@@ -11,6 +11,14 @@ export const getEvents = async (): Promise<Event[]> => {
     return response.json();
 };
 
+export const getEvent = async (id: string): Promise<Event> => {
+    const response = await fetch(`${API_BASE_URL}/events/${id}`);
+    if (!response.ok) {
+        throw new Error('Error fetching event');
+    }
+    return response.json();
+};
+
 export const createEvent = async (event: Omit<Event, '_id'>): Promise<Event> => {
     const response = await fetch(`${API_BASE_URL}/events`, {
         method: 'POST',
