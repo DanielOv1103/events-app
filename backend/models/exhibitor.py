@@ -13,6 +13,7 @@ class Exhibitor(BaseModel):
     address: str
     city: str
     country: str
+    image: str
     created_at: datetime
     updated_at: datetime
     

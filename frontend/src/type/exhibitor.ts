@@ -9,6 +9,7 @@ export interface Exhibitor {
     address: string;
     city: string;
     country: string;
+    image: string;
     created_at: string;
     updated_at: string;
 }

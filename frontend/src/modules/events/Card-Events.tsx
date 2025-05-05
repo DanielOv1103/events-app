@@ -6,15 +6,15 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Calendar, MapPin, Edit2, Trash2, Clock, DollarSign } from "lucide-react"
-import { Event } from '../../type/Events'
+import { Event } from '@/type/events'
 
 interface CardEventsProps {
     event: Event | null | undefined
-    onEdit: () => void
-    onDelete: () => void
+    // onEdit: () => void
+    // onDelete: () => void
 }
 
-const CardEvents = ({ event, onEdit, onDelete }: CardEventsProps) => {
+const CardEvents = ({ event}: CardEventsProps) => {
     if (!event) {
         return <div className="bg-white rounded-lg shadow p-4">Evento no disponible</div>;
     }
@@ -72,7 +72,7 @@ const CardEvents = ({ event, onEdit, onDelete }: CardEventsProps) => {
                     <div className="flex items-center text-sm text-gray-500">
                         <MapPin className="h-4 w-4 mr-2 text-violet-500" />
                         <span>
-                            {event.location || 'Ubicación no especificada'}
+                            {/* {event.location || 'Ubicación no especificada'} */}
                             {event.address && ` (${event.address})`}
                         </span>
                     </div>
@@ -113,7 +113,7 @@ const CardEvents = ({ event, onEdit, onDelete }: CardEventsProps) => {
                     variant="outline"
                     size="sm"
                     className="text-violet-500 hover:bg-violet-700 hover:text-white"
-                    onClick={onEdit}
+                    // onClick={onEdit}
                 >
                     <Edit2 className="h-4 w-4 mr-2" />
                     Editar
@@ -122,7 +122,7 @@ const CardEvents = ({ event, onEdit, onDelete }: CardEventsProps) => {
                     variant="outline"
                     size="sm"
                     className="text-red-500 hover:bg-red-700 hover:text-white"
-                    onClick={onDelete}
+                    // onClick={onDelete}
                 >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Eliminar

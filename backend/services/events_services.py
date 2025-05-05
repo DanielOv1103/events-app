@@ -2,7 +2,22 @@ from bson import ObjectId
 from typing import List, Optional
 from models.event import Event
 from fastapi import HTTPException
+from datetime import datetime
 import db
+
+
+def calculate_total_capacity(distributions: List[dict]) -> int:
+    total = 0
+    for d in distributions:
+        capacity = d.get("capacity", 0)
+        ocuped = d.get("ocuped", 0)
+        if ocuped > capacity:
+            raise HTTPException(
+                status_code=400,
+                detail=f"La distribución '{d.get('name', 'Sin nombre')}' tiene más ocupados ({ocuped}) que capacidad ({capacity})."
+            )
+        total += capacity
+    return total
 
 def list_events() -> List[Event]:
     events: List[Event] = []
@@ -26,10 +41,14 @@ def create_event(event_data: dict) -> Event:
         else:
             data = event_data.copy()
             data.pop("id", None)
+
+        data["total_capacity"] = calculate_total_capacity(data.get("distribution", []))
         
         result = db.db["events"].insert_one(data)
         return get_event(str(result.inserted_id))
     
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Error creating event: {e}")
         raise HTTPException(status_code=500, detail="Error creating event")
@@ -46,14 +65,19 @@ def delete_event(event_id: str):
         return None
 
 def update_event(event_id: str, update_data: dict) -> bool:
-    """Update an existing event"""
     try:
         _id = ObjectId(event_id)
         
-        # Remove id if present in update data
         update_data.pop("id", None)
         update_data.pop("_id", None)
+
+        # Validar distribución si se incluye
+        if "distribution" in update_data:
+            update_data["total_capacity"] = calculate_total_capacity(update_data["distribution"])
         
+        # Actualizar campo de fecha
+        update_data["updated_at"] = datetime.utcnow()
+
         result = db.db["events"].update_one(
             {"_id": _id},
             {"$set": update_data}
@@ -62,7 +86,9 @@ def update_event(event_id: str, update_data: dict) -> bool:
         if result.matched_count == 0:
             return False
         return True
-    
+
+    except HTTPException:
+        raise
     except InvalidId:
         raise HTTPException(status_code=400, detail="Invalid event ID")
     except Exception as e:

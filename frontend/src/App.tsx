@@ -1,5 +1,6 @@
 import Home from './pages/Home'
-import Events from './pages/Events'
+import Events from './pages/Events/Events'
+import Create from './pages/Events/Create-Events'
 import Exhibitors from './pages/Exhibitors'
 import Layout from './pages/layout'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
@@ -15,6 +16,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/events" element={<Events />} />
             <Route path='/exhibitors' element={<Exhibitors />} />
+            <Route path='/events/create' element={<Create />} />
           </Route>
         </Routes>
       </BrowserRouter>
