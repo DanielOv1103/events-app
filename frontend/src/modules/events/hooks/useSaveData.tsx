@@ -12,14 +12,26 @@ export const useSaveData = () => {
 
         try {
             let response;
+            const timestamp = new Date().toISOString();
 
             if (data._id) {
-                // Editar evento
-                response = await updateEvent(data._id, data);
+                // Editar evento: solo actualizar updated_at
+                const updatedData = {
+                    ...data,
+                    updated_at: timestamp,
+                };
+                console.log("Datos del evento enviados:", updatedData);
+                response = await updateEvent(data._id, updatedData);
                 console.log("Evento actualizado:", response);
             } else {
-                // Crear nuevo evento
-                response = await createEvent(data);
+                // Crear nuevo evento: agregar created_at y updated_at
+                const newData = {
+                    ...data,
+                    created_at: timestamp,
+                    updated_at: timestamp,
+                };
+                console.log("Datos del evento enviados:", newData);
+                response = await createEvent(newData);
                 console.log("Evento creado:", response);
             }
 

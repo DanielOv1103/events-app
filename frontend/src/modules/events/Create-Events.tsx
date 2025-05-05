@@ -46,7 +46,7 @@ export default function CreateEvent() {
                     ocuped: 0,
                     [field]: Number(value),
                 };
-    
+
             const newDistributions = prev.distribution.filter(d => d.name !== distName);
             return {
                 ...prev,
@@ -58,15 +58,15 @@ export default function CreateEvent() {
     // Update exhibitorId in formData when a new exhibitor is selected
     useEffect(() => {
         if (selectedExhibitors.length > 0) {
+            // Mapea los exhibidores seleccionados a su id
             setFormData(prev => ({
                 ...prev,
-                id_exhibitor: selectedExhibitors.map(ex => ex._id),
+                id_exhibitor: selectedExhibitors.map(exhibitor => exhibitor._id),
             }));
         } else {
             setFormData(prev => ({ ...prev, id_exhibitor: [] }));
         }
     }, [selectedExhibitors]);
-    
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -74,8 +74,19 @@ export default function CreateEvent() {
     };
 
     const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setFormData(prev => ({ ...prev, tags: value.split(",").map(tag => tag.trim()) }));
+        const { value } = e.target;
+        setFormData(prevData => ({
+            ...prevData,
+            tags: value.split(',').map(tag => tag.trim()),
+        }));
+    };
+
+    const handleExhibitorRemove = (id: string) => {
+        const updatedExhibitors = formData.id_exhibitor.filter(exhibitorId => exhibitorId !== id);
+        setFormData(prev => ({
+            ...prev,
+            id_exhibitor: updatedExhibitors,
+        }));
     };
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,7 +123,8 @@ export default function CreateEvent() {
                     />
                 ))}
             </div>
-            <div className="flex justify-center w-full p-4">
+            <div className="w-full p-4">
+                <h2 className="text-lg font-bold mb-2">Formulario de evento</h2>
                 <Form
                     formData={formData}
                     onChange={handleChange}
@@ -121,6 +133,7 @@ export default function CreateEvent() {
                     onCategoryChange={handleCategoryChange}
                     onSubmit={handleSubmit}
                     onDistributionChange={handleDistributionChange}
+                    onExhibitorRemove={handleExhibitorRemove}
                 />
             </div>
         </main>

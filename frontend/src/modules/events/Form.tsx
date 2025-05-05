@@ -5,6 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { useDataHook } from "./hooks/useDataHook"
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react"; // Icono para cerrar
+
 
 interface FormProps {
     formData: Event;
@@ -14,6 +18,7 @@ interface FormProps {
     onCategoryChange: (value: string) => void;
     onSubmit: (e: React.FormEvent) => void;
     onDistributionChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onExhibitorRemove: (id: string) => void;
 }
 
 export default function Form({
@@ -23,8 +28,27 @@ export default function Form({
     onCheckboxChange,
     onCategoryChange,
     onSubmit,
-    onDistributionChange
+    onDistributionChange,
+    onExhibitorRemove
 }: FormProps) {
+
+    const { exhibitors, loading, error } = useDataHook()
+
+    if (loading) return <p>Cargando expositores...</p>;
+    if (error) return <p>Error al cargar expositores: {error}</p>;
+
+    const exhibitorsOptions = exhibitors.map(exhibitor => ({
+        id: exhibitor._id,
+        name: exhibitor.name,
+        category: exhibitor.category_exhibitor,
+        bio: exhibitor.bio,
+        image: exhibitor.image,
+    }))
+
+    const handleRemoveExhibitor = (id: string) => {
+        onExhibitorRemove(id); // Usamos la función pasada desde el padre
+    };
+
     return (
         <form onSubmit={onSubmit} className="space-y-4 p-4 bg-white rounded-lg shadow-md">
             <main className="flex space-x-4 w-full">
@@ -95,11 +119,33 @@ export default function Form({
                 <div className="space-y-4 w-full">
                     <div className="space-y-2">
                         <Label>Expositores</Label>
-                        <Input
-                            name="id_exhibitor"
-                            value={formData?.id_exhibitor?.join(', ') || ""}
-                            onChange={onTagsChange}
-                        />
+
+                        {/* Badges */}
+                        <div className="flex flex-wrap gap-2">
+                            {formData.id_exhibitor?.length === 0 ? (
+                                <p className="text-gray-500">No hay expositores seleccionados</p>
+                            ) : (
+                                formData.id_exhibitor.map((id) => {
+                                    const exhibitor = exhibitorsOptions.find((ex) => ex.id === id);
+                                    return (
+                                        <div
+                                            key={id}
+                                            className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full"
+                                        >
+                                            <span className="mr-2">{exhibitor?.name || id}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveExhibitor(id)}
+                                                className="text-blue-600 hover:text-blue-800 font-bold"
+                                            >
+                                                <X size={16} />
+                                            </button>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+
                     </div>
                     <div className="space-y-2">
                         <Label>Distribuciones</Label>
@@ -132,6 +178,7 @@ export default function Form({
                                         placeholder="Precio"
                                         value={formData?.distribution?.find(d => d.name === "Golden")?.price ?? ""}
                                         onChange={onDistributionChange}
+                                        type="number"
                                     />
                                     <div className="border-r-2 border-gray-100"></div>
                                     <Input
@@ -139,6 +186,7 @@ export default function Form({
                                         placeholder="Capacidad"
                                         value={formData?.distribution?.find(d => d.name === "Golden")?.capacity ?? ""}
                                         onChange={onDistributionChange}
+                                        type="number"
                                     />
                                 </div>
                             </div>
@@ -151,6 +199,7 @@ export default function Form({
                                         placeholder="Precio"
                                         value={formData?.distribution?.find(d => d.name === "Vip")?.price ?? ""}
                                         onChange={onDistributionChange}
+                                        type="number"
                                     />
                                     <div className="border-r-2 border-gray-100"></div>
                                     <Input
@@ -158,6 +207,7 @@ export default function Form({
                                         placeholder="Capacidad"
                                         value={formData?.distribution?.find(d => d.name === "Vip")?.capacity ?? ""}
                                         onChange={onDistributionChange}
+                                        type="number"
                                     />
                                 </div>
                             </div>
@@ -168,6 +218,7 @@ export default function Form({
                                     <Input
                                         name="Platinium-price"
                                         placeholder="Precio"
+                                        type="number"
                                         value={formData?.distribution?.find(d => d.name === "Platinium")?.price ?? ""}
                                         onChange={onDistributionChange}
                                     />
@@ -177,6 +228,7 @@ export default function Form({
                                         placeholder="Capacidad"
                                         value={formData?.distribution?.find(d => d.name === "Platinium")?.capacity ?? ""}
                                         onChange={onDistributionChange}
+                                        type="number"
                                     />
                                 </div>
                             </div>
